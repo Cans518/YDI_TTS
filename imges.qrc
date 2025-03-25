@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/background">
+        <file>1.png</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>font/LXGWWenKaiMonoGBScreen.ttf</file>
+        <file>1.ico</file>
+    </qresource>
+</RCC>
