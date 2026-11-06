@@ -39,11 +39,16 @@ jobs:
             libgl1-mesa-dev libegl1-mesa-dev libxcb-cursor0 libxkbcommon-x11-0 \
             libxcb-xinerama0 libwayland-client0 libwayland-cursor0 libwayland-egl1 \
             xvfb weston
+      - name: Set up Python for Qt tools
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
       - name: Install Qt
         uses: jurplel/install-qt-action@b344308e4483fc892e0d27b3cd1b173ebdd95f06 # v4
         with:
           version: ${{ env.QT_VERSION }}
-          modules: qtserialport qtsvg qt5compat qtwayland
+          setup-python: false
+          modules: qtserialport qt5compat
           cache: true
       - name: Build, test and package
         env:
@@ -85,11 +90,16 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Set up Python for Qt tools
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
       - name: Install Qt
         uses: jurplel/install-qt-action@b344308e4483fc892e0d27b3cd1b173ebdd95f06 # v4
         with:
           version: ${{ env.QT_VERSION }}
-          modules: qtserialport qtsvg qt5compat
+          setup-python: false
+          modules: qtserialport qt5compat
           cache: true
       - name: Build, test and package
         env:
@@ -121,12 +131,17 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Set up Python for Qt tools
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
       - name: Install Qt
         uses: jurplel/install-qt-action@b344308e4483fc892e0d27b3cd1b173ebdd95f06 # v4
         with:
           version: ${{ env.QT_VERSION }}
+          setup-python: false
           arch: win64_msvc2022_64
-          modules: qtserialport qtsvg
+          modules: qtserialport
           cache: true
       - name: Build and test
         shell: pwsh
