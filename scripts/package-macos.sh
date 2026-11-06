@@ -31,7 +31,7 @@ test -f "$app/Contents/Resources/qt.conf"
 python3 "$repo_root/scripts/verify-bundle.py" macos "$app" "$qt_root" "$build_dir"
 codesign --force --deep --sign - "$app"
 codesign --verify --deep --strict --verbose=2 "$app"
-lipo -verify_arch "$architecture" "$app/Contents/MacOS/YDI_TTS"
+lipo "$app/Contents/MacOS/YDI_TTS" -verify_arch "$architecture"
 test -f "$app/Contents/PlugIns/platforms/libqcocoa.dylib" || \
     test -f "$app/Contents/plugins/platforms/libqcocoa.dylib"
 
