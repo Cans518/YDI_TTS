@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+umask 022
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 build_dir="${1:-$repo_root/build/linux}"
@@ -22,6 +23,7 @@ mkdir -p "$YDI_UI_CAPTURE_DIR"
 ctest --test-dir "$build_dir" --output-on-failure --output-junit "$build_dir/tests.xml"
 
 appdir="$(mktemp -d "$build_dir/AppDir.XXXXXX")"
+chmod 755 "$appdir"
 DESTDIR="$appdir" cmake --install "$build_dir" --prefix /usr
 tools_dir="$build_dir/tools"
 python3 "$repo_root/scripts/fetch-appimage-tools.py" "$tools_dir"

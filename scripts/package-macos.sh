@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+umask 022
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 build_dir="${1:-$repo_root/build/macos}"
@@ -41,6 +42,7 @@ env -u QT_PLUGIN_PATH -u QT_QPA_PLATFORM_PLUGIN_PATH -u DYLD_LIBRARY_PATH \
     "$smoke_dir/YDI_TTS.app/Contents/MacOS/YDI_TTS" --smoke-test
 
 dmg_root="$(mktemp -d "$build_dir/dmg.XXXXXX")"
+chmod 755 "$dmg_root"
 ditto "$app" "$dmg_root/YDI_TTS.app"
 ln -s /Applications "$dmg_root/Applications"
 cp "$repo_root/docs/macos-distribution.txt" "$dmg_root/安装说明.txt"
