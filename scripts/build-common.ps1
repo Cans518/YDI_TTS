@@ -13,8 +13,8 @@ function Copy-BuildSources {
         $sourcePath.StartsWith($stagePrefix, [StringComparison]::OrdinalIgnoreCase)) {
         throw 'The staging directory and source repository must not overlap.'
     }
-    $files = @(Get-Item -LiteralPath (Join-Path $sourcePath 'CMakeLists.txt'))
-    foreach ($directory in @('src', 'resources', 'tests')) {
+    $files = @(Get-Item -LiteralPath (Join-Path $sourcePath 'CMakeLists.txt'), (Join-Path $sourcePath 'LICENSE'))
+    foreach ($directory in @('src', 'resources', 'tests', 'packaging')) {
         $files += Get-ChildItem -LiteralPath (Join-Path $sourcePath $directory) -Recurse -File
     }
 

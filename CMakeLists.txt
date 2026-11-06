@@ -1,15 +1,19 @@
 cmake_minimum_required(VERSION 3.19)
-project(YDI_TTS VERSION 1.1.0 LANGUAGES CXX)
+project(YDI_TTS VERSION 1.2.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_AUTORCC ON)
 option(YDI_SINGLE_FILE "Build a standalone Windows executable with static Qt" OFF)
+option(YDI_DEPLOY_RUNTIME "Install Qt runtime dependencies with the application" ON)
 if(YDI_SINGLE_FILE)
     set(QT_SKIP_AUTO_PLUGIN_INCLUSION ON)
 endif()
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets SerialPort Svg)
+if(NOT WIN32)
+    find_package(Qt6 6.5 REQUIRED COMPONENTS Core5Compat)
+endif()
 qt_standard_project_setup()
 
 if(YDI_SINGLE_FILE)
@@ -61,6 +65,9 @@ add_library(tts_ui STATIC
 )
 target_include_directories(tts_ui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 target_link_libraries(tts_ui PUBLIC Qt6::Core Qt6::Widgets Qt6::SerialPort Qt6::Svg)
+if(NOT WIN32)
+    target_link_libraries(tts_ui PUBLIC Qt6::Core5Compat)
+endif()
 configure_tts_target(tts_ui)
 
 # Generate the large embedded font/image object once, without compiling its bytes as C++.
@@ -73,6 +80,17 @@ if(WIN32)
     target_include_directories(YDI_TTS PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/resources")
 endif()
 target_link_libraries(YDI_TTS PRIVATE tts_ui)
+if(APPLE)
+    set_target_properties(YDI_TTS PROPERTIES
+        MACOSX_BUNDLE_GUI_IDENTIFIER "cn.ydich.tts"
+        MACOSX_BUNDLE_BUNDLE_NAME "长风 TTS"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_ICON_FILE "app.icns"
+    )
+    target_sources(YDI_TTS PRIVATE resources/icons/app.icns)
+    set_source_files_properties(resources/icons/app.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+endif()
 target_compile_definitions(YDI_TTS PRIVATE YDI_TTS_VERSION="${PROJECT_VERSION}")
 configure_tts_executable(YDI_TTS)
 if(YDI_SINGLE_FILE)
@@ -99,10 +117,20 @@ install(TARGETS YDI_TTS
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
-install(FILES resources/licenses/remixicon-LICENSE.txt resources/licenses/THIRD_PARTY.md
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/YDI_TTS/licenses
+if(APPLE)
+    set(ydi_license_destination "YDI_TTS.app/Contents/Resources/licenses")
+else()
+    set(ydi_license_destination "${CMAKE_INSTALL_DATADIR}/YDI_TTS/licenses")
+endif()
+install(FILES LICENSE resources/licenses/remixicon-LICENSE.txt resources/licenses/font-OFL.txt
+    resources/licenses/qt-LGPL-3.0.txt resources/licenses/THIRD_PARTY.md
+    DESTINATION "${ydi_license_destination}"
 )
-if(NOT YDI_SINGLE_FILE)
+if(UNIX AND NOT APPLE)
+    install(FILES packaging/linux/cn.ydich.tts.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+    install(FILES resources/icons/cn.ydich.tts.png DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/256x256/apps)
+endif()
+if(YDI_DEPLOY_RUNTIME AND NOT YDI_SINGLE_FILE)
     qt_generate_deploy_app_script(
         TARGET YDI_TTS OUTPUT_SCRIPT deploy_script NO_UNSUPPORTED_PLATFORM_ERROR
     )

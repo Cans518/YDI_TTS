@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=YDI TTS
+Name[zh_CN]=长风 TTS 模块调试工具
+Comment=Serial TTS module configuration and playback
+Comment[zh_CN]=串口语音模块调试、参数设置与配置回读
+Exec=YDI_TTS
+Icon=cn.ydich.tts
+Terminal=false
+Categories=Utility;Development;
+StartupWMClass=YDI_TTS

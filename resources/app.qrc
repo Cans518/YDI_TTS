@@ -10,5 +10,8 @@
         <file>theme.qss</file>
         <file>licenses/THIRD_PARTY.md</file>
         <file>licenses/remixicon-LICENSE.txt</file>
+        <file>licenses/font-OFL.txt</file>
+        <file>licenses/qt-LGPL-3.0.txt</file>
+        <file alias="licenses/GPL-3.0.txt">../LICENSE</file>
     </qresource>
 </RCC>

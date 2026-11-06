@@ -1,9 +1,10 @@
 #include "core/ttsprotocol.h"
 
-#include <QStringEncoder>
 #include <QStringList>
 #ifdef Q_OS_WIN
 #include <qt_windows.h>
+#else
+#include <QTextCodec>
 #endif
 
 TtsProtocol::EncodedText TtsProtocol::encodeText(const QString &text)
@@ -27,11 +28,12 @@ TtsProtocol::EncodedText TtsProtocol::encodeText(const QString &text)
     if (written != length || substituted)
         return { {}, QStringLiteral("内容包含模块不支持的字符，请移除表情或特殊字符。") };
 #else
-    QStringEncoder encoder("GBK");
-    if (!encoder.isValid())
+    const auto *codec = QTextCodec::codecForName("GBK");
+    if (!codec)
         return { {}, QStringLiteral("当前系统缺少 GBK 编码支持。") };
-    bytes = encoder(text);
-    if (encoder.hasError())
+    QTextCodec::ConverterState state;
+    bytes = codec->fromUnicode(text.constData(), int(text.size()), &state);
+    if (state.invalidChars || state.remainingChars || codec->toUnicode(bytes) != text)
         return { {}, QStringLiteral("内容包含模块不支持的字符，请移除表情或特殊字符。") };
 #endif
     if (bytes.size() > MaxTextBytes)

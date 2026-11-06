@@ -1,5 +1,7 @@
 # 长风 TTS 模块调试工具
 
+[下载发布包](https://github.com/Cans518/YDI_TTS/releases/latest) · [构建状态](https://github.com/Cans518/YDI_TTS/actions/workflows/build.yml) · [GPL-3.0 许可证](LICENSE)
+
 基于 Qt 6 Widgets 的简易串口语音合成小工具。窗口固定为 500 × 250，使用项目原有的 `resources/images/background.png` 作为背景和自定义字体。支持五档音量、五档语速、八种音色和五档音调，串口采用 115200 / 8N1。
 
 ## 使用
@@ -32,7 +34,7 @@
 | 音色 07 | 男童声 | 56 |
 | 音色 08 | 男童声 | 57 |
 
-文本按 GBK 编码，最多 500 字节。中文通常占 2 字节；界面会即时显示字节数，提示不支持的字符和超限内容。Windows 下使用明确的 CP936 编码，不受系统区域编码影响。非 Windows 构建需要 Qt 的 GBK 编码支持；缺少支持时会明确提示，避免发送错误编码。
+文本按 GBK 编码，最多 500 字节。中文通常占 2 字节；界面会即时显示字节数，提示不支持的字符和超限内容。Windows 使用明确的 CP936 编码，Linux/macOS 使用随包部署的 Qt Core5Compat GBK 转换，均拒绝无法表示的字符。
 
 底部同一栏左侧轮播最新操作结果与常用提示，右侧固定显示“一点创绘 · Mzee”。普通提示停留约 4 秒，再平滑上滑切换；页码显示当前位置。长消息按实际宽度分页，悬停可暂停并查看全文，点击或聚焦后使用左右键 / 空格可切换。
 
@@ -63,6 +65,8 @@ resources/        图片、图标、字体、样式和许可说明
 scripts/          普通构建、单文件构建及公共辅助函数
 tests/            协议、串口模拟、交互和截图验证
 docs/             模块通信约定
+packaging/        平台桌面入口与打包资料
+.github/          多平台构建和发布工作流
 ```
 
 文本统一使用 UTF-8 和 LF 换行，C++ 格式由根目录 `.clang-format` 定义。构建产物、截图、临时文件和 IDE 个人设置由 `.gitignore` 排除；仓库保存可重建的源码与资源。
@@ -118,6 +122,22 @@ ctest --test-dir build/local --output-on-failure
 ```
 
 运行程序和测试前，将 Qt `bin` 与对应编译器的 `bin` 加入 PATH。没有 Qt Test 的发布构建可传入 `-DBUILD_TESTING=OFF`。
+
+## Linux 与 macOS 分发
+
+| 平台 | 发布文件 | 说明 |
+| --- | --- | --- |
+| Windows x86_64 | 单文件 EXE | 本地静态 Qt 构建，不依赖外部 Qt DLL |
+| Linux x86_64 | AppImage | Ubuntu 22.04 / glibc 2.35 或更新的桌面系统；验证 X11 与 Wayland |
+| macOS arm64 / x86_64 | 两个独立 DMG | 目标 macOS 12+；临时签名，未进行 Developer ID 签名或公证 |
+
+Linux AppImage 下载后需赋予执行权限；串口权限由系统管理。macOS 未公证版本的首次打开提示与处理说明随 DMG 附带。各平台都不会保存配置，每次启动恢复默认值。
+
+构建步骤、CI 发布流程及签名状态见 [跨平台打包](docs/packaging.md)。发布包提供 `SHA256SUMS` 与源码提交信息。
+
+## 授权与依赖
+
+项目代码采用 GPL-3.0-only。字体、图标及 Qt 依赖的许可和对应源码获取方式见 [依赖说明](docs/dependencies.md)；许可文本同时随发布包提供。
 
 ## 验证范围与硬件验收
 

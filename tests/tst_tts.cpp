@@ -232,6 +232,8 @@ private slots:
         QVERIFY2(chinese.valid(), qPrintable(chinese.error));
         QCOMPARE(chinese.bytes, QByteArray::fromHex("d6d0cec4414243"));
         QVERIFY(!TtsProtocol::encodeText(QString::fromUtf8("🙂")).valid());
+        QVERIFY(!TtsProtocol::encodeText(QString(QChar(0xd800))).valid());
+        QVERIFY(!TtsProtocol::encodeText(QString(QChar(0xdc00))).valid());
         QVERIFY(!TtsProtocol::encodeText(QStringLiteral(" \n\t")).valid());
         QVERIFY(TtsProtocol::encodeText(QString(250, QChar(0x4e2d))).valid());
         QVERIFY(!TtsProtocol::encodeText(QString(251, QChar(0x4e2d))).valid());

@@ -10,6 +10,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName(QStringLiteral("Yidian"));
     QCoreApplication::setApplicationName(QStringLiteral("YDI_TTS"));
     QCoreApplication::setApplicationVersion(QStringLiteral(YDI_TTS_VERSION));
+#ifdef Q_OS_LINUX
+    QGuiApplication::setDesktopFileName(QStringLiteral("cn.ydich.tts"));
+#endif
     UiTheme::install(app);
 
     QCommandLineParser parser;
