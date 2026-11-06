@@ -1,0 +1,44 @@
+QWidget { color: palette(window-text); }
+QWidget#workspace { background: transparent; }
+QLabel { background: transparent; }
+QLabel#headline { color: #243a30; font-size: 17px; font-weight: 400; }
+QLabel#connectionBadge { background: rgba(253, 254, 250, 240); color: #53675b; border: 1px solid rgba(255,255,255,215); border-radius: 9px; padding: 1px 8px; font-size: 12px; }
+QLabel#connectionBadge[connected="true"] { background: #eaf5ec; color: #37684a; }
+QFrame#toolPanel { background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 rgba(255,255,254,226), stop:0.5 rgba(255,255,251,210), stop:1 rgba(248,252,248,226)); border: 1px solid rgba(255,255,255,240); border-radius: 10px; }
+QLabel[role="fieldLabel"] { color: #344e40; font-size: 13px; font-weight: 400; }
+QLabel[role="count"] { color: #4a6153; background: rgba(255, 255, 252, 235); border-radius: 5px; padding: 2px 6px; font-size: 12px; }
+QLabel[role="count"][invalid="true"] { color: #b63f3b; }
+QLabel[role="value"] { color: #526f5d; background: transparent; padding: 2px 4px; font-size: 12px; }
+QLabel[role="value"][confirmed="true"] { color: palette(highlight); }
+QLabel#footerBrand { color: #657668; font-size: 11px; }
+QFrame#notice { background: rgba(249, 252, 246, 238); border: 1px solid rgba(246, 251, 242, 240); border-radius: 7px; }
+QFrame#notice[tone="error"] { background: #fff1ef; border-color: #edcec6; }
+QFrame#notice[tone="success"] { background: #eef7f0; border-color: #dcecdf; }
+QFrame#notice[tone="busy"] { background: #eff7f6; border-color: #dae9e4; }
+QLabel#noticeText { color: #3c5948; font-size: 12px; }
+QLabel#noticeText[tone="error"] { color: #a13e36; }
+QComboBox { background: rgba(255, 255, 253, 245); border: 1px solid #ccd9cc; border-radius: 5px; padding: 3px 7px; padding-right: 22px; min-height: 20px; selection-background-color: #edf5ee; selection-color: #203c33; }
+QComboBox:hover { border-color: #9eb9a8; }
+QComboBox:focus { border-color: palette(highlight); background: palette(base); }
+QComboBox:disabled { color: #617869; background: rgba(247, 250, 244, 242); border-color: #dbe4d7; }
+QComboBox::drop-down { border: none; width: 24px; }
+QComboBox::down-arrow { image: url(:/icons/chevron.svg); width: 12px; height: 12px; }
+QComboBox QAbstractItemView { color: palette(text); background: palette(base); border: 1px solid palette(mid); padding: 4px; outline: none; selection-background-color: palette(alternate-base); selection-color: palette(highlight); }
+QComboBox QAbstractItemView::item { min-height: 28px; padding: 3px 6px; }
+QLineEdit { background: rgba(255, 255, 253, 245); border: 1px solid #d0ddcf; border-radius: 5px; padding: 3px 6px; font-size: 13px; selection-background-color: #dceee2; selection-color: #183e36; }
+QLineEdit:hover { border-color: #97b3a2; }
+QLineEdit:focus { border-color: palette(highlight); background: palette(base); }
+QLineEdit[invalid="true"] { border-color: #ce7770; }
+QScrollBar:vertical { background: transparent; width: 6px; margin: 3px 0; }
+QScrollBar::handle:vertical { background: #b8caba; border-radius: 3px; min-height: 22px; }
+QScrollBar::handle:vertical:hover { background: #8faa99; }
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: transparent; }
+QToolTip { color: palette(text); background: palette(base); border: 1px solid palette(mid); border-radius: 6px; padding: 5px 8px; }
+QWidget#soundPopup, QWidget#hintBubble { background: transparent; }
+QLabel#parameterTitle { color: palette(window-text); font-size: 16px; }
+QLabel#parameterDescription { color: palette(dark); font-size: 12px; }
+QLabel#parameterValue { color: palette(highlight); font-size: 12px; background: palette(alternate-base); border-radius: 5px; padding: 3px 7px; }
+QLabel#hintTitle { color: palette(window-text); font-size: 13px; }
+QLabel#hintBody { color: palette(dark); font-size: 12px; }
+QLabel#hintShortcut { color: palette(dark); font-size: 11px; background: palette(alternate-base); border: 1px solid palette(mid); border-radius: 4px; padding: 2px 5px; }

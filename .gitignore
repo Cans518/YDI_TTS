@@ -1,82 +1,51 @@
-# This file is used to ignore files which are generated
-# ----------------------------------------------------------------------------
+# Generated build and release output
+/build*/
+/out/
+/dist/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+build.ninja
+.ninja_*
+compile_commands.json
 
-*~
-*.autosave
+# Compiler and Qt generated files
 *.a
-*.core
-*.moc
+*.lib
 *.o
 *.obj
-*.orig
-*.rej
-*.so
-*.so.*
-*_pch.h.cpp
-*_resource.rc
+*.dll
+*.exe
+*.pdb
+*.ilk
+*.exp
+*.res
 *.qm
-.#*
-*.*#
-core
-!core/
-tags
-.DS_Store
-.directory
-*.debug
-Makefile*
-*.prl
-*.app
+*.moc
 moc_*.cpp
 ui_*.h
 qrc_*.cpp
-Thumbs.db
-*.res
-*.rc
-/.qmake.cache
-/.qmake.stash
 
-# qtcreator generated files
+# Local IDE state
+CMakeLists.txt.user*
+CMakeUserPresets.json
 *.pro.user*
 *.qbs.user*
-CMakeLists.txt.user*
+.vscode/
+.idea/
+.vs/
 
-# xemacs temporary files
-*.flc
-
-# Vim temporary files
-.*.swp
-
-# Visual Studio generated files
-*.ib_pdb_index
-*.idb
-*.ilk
-*.pdb
-*.sln
-*.suo
-*.vcproj
-*vcproj.*.*.user
-*.ncb
-*.sdf
-*.opensdf
-*.vcxproj
-*vcxproj.*
-
-# MinGW generated files
-*.Debug
-*.Release
-
-# Python byte code
+# Editor and operating-system temporary files
+*~
+*.autosave
+*.swp
+*.swo
+*.orig
+*.rej
+*.aps
+Thumbs.db
+.DS_Store
+__pycache__/
 *.pyc
-
-# Binaries
-# --------
-*.dll
-*.exe
-
-# Directories with generated files
-.moc/
-.obj/
-.pch/
-.rcc/
-.uic/
-/build*/

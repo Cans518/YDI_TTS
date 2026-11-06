@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/background.png</file>
+        <file>icons/app.ico</file>
+        <file>icons/chevron.svg</file>
+        <file>icons/bilibili.svg</file>
+        <file>icons/taobao.svg</file>
+        <file>icons/ydich.png</file>
+        <file>fonts/LXGWWenKaiMonoGBScreen.ttf</file>
+        <file>theme.qss</file>
+        <file>licenses/THIRD_PARTY.md</file>
+        <file>licenses/remixicon-LICENSE.txt</file>
+    </qresource>
+</RCC>

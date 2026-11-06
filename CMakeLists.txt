@@ -1,50 +1,110 @@
 cmake_minimum_required(VERSION 3.19)
-project(tts_ui LANGUAGES CXX)
+project(YDI_TTS VERSION 1.1.0 LANGUAGES CXX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets LinguistTools SerialPort)
-
-
-
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_AUTORCC ON)
+option(YDI_SINGLE_FILE "Build a standalone Windows executable with static Qt" OFF)
+if(YDI_SINGLE_FILE)
+    set(QT_SKIP_AUTO_PLUGIN_INCLUSION ON)
+endif()
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets SerialPort Svg)
 qt_standard_project_setup()
 
-set(APP_ICON_RESOURCE "logo.rc")
+if(YDI_SINGLE_FILE)
+    get_target_property(qt_core_type Qt6::Core TYPE)
+    if(NOT WIN32 OR NOT qt_core_type STREQUAL "STATIC_LIBRARY")
+        message(FATAL_ERROR "YDI_SINGLE_FILE requires Windows and a static Qt installation.")
+    endif()
+    set(ydi_static_plugins)
+    foreach(plugin QWindowsIntegrationPlugin QOffscreenIntegrationPlugin QSvgIconPlugin QSvgPlugin QICOPlugin)
+        find_package(Qt6${plugin} CONFIG REQUIRED PATHS "${Qt6Gui_DIR}" NO_DEFAULT_PATH)
+        list(APPEND ydi_static_plugins Qt6::${plugin})
+    endforeach()
+    if(MSVC)
+        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    endif()
+endif()
 
+function(configure_tts_target target)
+    if(MSVC)
+        target_compile_options(${target} PRIVATE "$<$<COMPILE_LANGUAGE:CXX>:/utf-8;/W4>")
+    else()
+        target_compile_options(${target} PRIVATE "$<$<COMPILE_LANGUAGE:CXX>:-Wall;-Wextra;-Wpedantic>")
+    endif()
+endfunction()
 
-qt_add_executable(tts_ui
-    WIN32 MACOSX_BUNDLE
-    main.cpp
-    SerialSender.h
-    SerialSender.cpp
-    imges.qrc
-    logo.rc
+function(configure_tts_executable target)
+    configure_tts_target(${target})
+    if(YDI_SINGLE_FILE)
+        target_sources(${target} PRIVATE src/app/staticplugins.cpp)
+        target_link_libraries(${target} PRIVATE ${ydi_static_plugins})
+        if(MINGW)
+            target_link_options(${target} PRIVATE -static)
+        endif()
+    endif()
+endfunction()
+
+add_library(tts_ui STATIC
+    src/app/serialsender.h src/app/serialsender.cpp
+    src/core/ttsprotocol.h src/core/ttsprotocol.cpp
+    src/core/serialtransaction.h src/core/serialtransaction.cpp
+    src/ui/customlevelslider.h src/ui/customlevelslider.cpp
+    src/ui/levelsliderwidget.h src/ui/levelsliderwidget.cpp
+    src/ui/animatedbutton.h src/ui/animatedbutton.cpp
+    src/ui/activityindicator.h src/ui/activityindicator.cpp
+    src/ui/uitheme.h src/ui/uitheme.cpp
+    src/ui/hoverhint.h src/ui/hoverhint.cpp
+    src/ui/parameterpopup.h src/ui/parameterpopup.cpp
+    src/ui/noticecarousel.h src/ui/noticecarousel.cpp
 )
+target_include_directories(tts_ui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_link_libraries(tts_ui PUBLIC Qt6::Core Qt6::Widgets Qt6::SerialPort Qt6::Svg)
+configure_tts_target(tts_ui)
 
-qt_add_resources(resources imges.qrc)
+# Generate the large embedded font/image object once, without compiling its bytes as C++.
+qt_add_big_resources(ydi_resource_objects resources/app.qrc)
 
-qt_add_translations(
-    TARGETS tts_ui
-    TS_FILES tts_ui_zh_CN.ts
-)
+qt_add_executable(YDI_TTS WIN32 MACOSX_BUNDLE src/app/main.cpp ${ydi_resource_objects})
+if(WIN32)
+    enable_language(RC)
+    target_sources(YDI_TTS PRIVATE resources/app.rc)
+    target_include_directories(YDI_TTS PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/resources")
+endif()
+target_link_libraries(YDI_TTS PRIVATE tts_ui)
+target_compile_definitions(YDI_TTS PRIVATE YDI_TTS_VERSION="${PROJECT_VERSION}")
+configure_tts_executable(YDI_TTS)
+if(YDI_SINGLE_FILE)
+    set_target_properties(YDI_TTS PROPERTIES OUTPUT_NAME YDI_TTS_Portable)
+    if(MINGW)
+        target_link_options(YDI_TTS PRIVATE -s)
+    endif()
+endif()
 
-target_link_libraries(tts_ui
-    PRIVATE
-        Qt::Core
-        Qt::Widgets
-        Qt6::SerialPort
-    ${resources}
-)
+include(CTest)
+if(BUILD_TESTING)
+    find_package(Qt6 REQUIRED COMPONENTS Test)
+    qt_add_executable(tts_tests tests/tst_tts.cpp ${ydi_resource_objects})
+    set_target_properties(tts_tests PROPERTIES WIN32_EXECUTABLE FALSE MACOSX_BUNDLE FALSE)
+    target_link_libraries(tts_tests PRIVATE tts_ui Qt6::Test)
+    configure_tts_executable(tts_tests)
+    add_test(NAME tts_tests COMMAND tts_tests)
+    set_tests_properties(tts_tests PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen" TIMEOUT 60)
+endif()
 
 include(GNUInstallDirs)
-
-install(TARGETS tts_ui
-    BUNDLE  DESTINATION .
+install(TARGETS YDI_TTS
+    BUNDLE DESTINATION .
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
-
-qt_generate_deploy_app_script(
-    TARGET tts_ui
-    OUTPUT_SCRIPT deploy_script
-    NO_UNSUPPORTED_PLATFORM_ERROR
+install(FILES resources/licenses/remixicon-LICENSE.txt resources/licenses/THIRD_PARTY.md
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/YDI_TTS/licenses
 )
-install(SCRIPT ${deploy_script})
+if(NOT YDI_SINGLE_FILE)
+    qt_generate_deploy_app_script(
+        TARGET YDI_TTS OUTPUT_SCRIPT deploy_script NO_UNSUPPORTED_PLATFORM_ERROR
+    )
+    install(SCRIPT ${deploy_script})
+endif()
