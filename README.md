@@ -1,152 +1,150 @@
-# 长风 TTS 模块调试工具
+<div align="center">
+  <img src="resources/icons/cn.ydich.tts.png" alt="长风 TTS 应用图标" width="112">
+  <h1>长风 TTS</h1>
+  <p>轻巧的串口语音合成调试工具 · 输入文字，调好声音，一键播报</p>
+  <p>
+    <a href="https://github.com/Cans518/YDI_TTS/actions/workflows/build.yml"><img src="https://github.com/Cans518/YDI_TTS/actions/workflows/build.yml/badge.svg" alt="Build and package"></a>
+    <img src="https://img.shields.io/badge/C%2B%2B-17-00599C?logo=cplusplus&amp;logoColor=white" alt="C++17">
+    <img src="https://img.shields.io/badge/Qt-6.5%2B-41CD52?logo=qt&amp;logoColor=white" alt="Qt 6.5+">
+    <img src="https://img.shields.io/badge/CMake-3.19%2B-064F8C?logo=cmake&amp;logoColor=white" alt="CMake 3.19+">
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPL--3.0--only-blue" alt="License: GPL-3.0-only"></a>
+  </p>
+  <p>
+    <a href="https://github.com/Cans518/YDI_TTS/releases/latest">下载应用</a> ·
+    <a href="#界面预览">界面预览</a> ·
+    <a href="#快速上手">快速上手</a> ·
+    <a href="#开发与构建">开发与构建</a> ·
+    <a href="https://github.com/Cans518/YDI_TTS/issues">反馈问题</a>
+  </p>
+</div>
 
-[下载发布包](https://github.com/Cans518/YDI_TTS/releases/latest) · [构建状态](https://github.com/Cans518/YDI_TTS/actions/workflows/build.yml) · [GPL-3.0 许可证](LICENSE)
+长风 TTS 是面向长风 TTS 串口模块的桌面调试工具，基于 **Qt 6 Widgets 与 C++17** 开发。连接模块后，即可发送中文文本、试听不同音色、调整声音参数和读取模块配置，适合语音播报项目的开发与调试。
 
-基于 Qt 6 Widgets 的简易串口语音合成小工具。窗口固定为 500 × 250，使用项目原有的 `resources/images/background.png` 作为背景和自定义字体。支持五档音量、五档语速、八种音色和五档音调，串口采用 115200 / 8N1。
+## 功能亮点
 
-## 使用
+- 🔊 **文字播报**：输入文本即可发送，实时显示字节数，支持回车快捷播报。
+- 🎚️ **声音调节**：五档音量、语速和音调，搭配八种音色，覆盖男声、女声、童声与特殊音色。
+- 🔌 **设备连接**：自动检测串口插拔，支持手动刷新与连接测试。
+- 📥 **配置读取**：一键查看模块当前音量、语速、音色和音调。
+- ✨ **轻巧界面**：500 × 250 紧凑窗口，浅色玻璃面板、霞鹜文楷字体与柔和动画。
+- 🖥️ **跨平台**：支持 Windows、Linux 与 macOS，Windows 提供单文件便携版。
 
-1. 连接 USB 串口设备，从列表中选择设备并点击 **打开串口**。列表自动检测插拔，也可按 `F5` 刷新。
-2. 可先点击 **测试连接**，检查模块响应及初始化是否成功。
-3. 在文本框输入内容，点击 **发送**，或按回车 / `Ctrl + Enter`。
-4. 调整音量或语速后点击对应的 **设置**。只有模块确认后才显示“已设置”；修改档位后会恢复“设置”提示。
-5. 点击 **音色音调**，在同一面板选择音色和五档音调，再点击 **设置** 一起提交。按 `Esc`、点击取消或面板外部可收起；取消保留本次已确认的设置。
-6. 点击 **读取配置**，从串口模块读取音量、语速、音色、音调。音量、语速和音调就近映射到五档，等距时选择较低档；状态栏和悬停说明保留模块原值。读取本身不写入参数，后续播报也保留读到的原始音色与音调，主动点击设置时才按所选五档写入。
-7. 按住顶部标题区拖动窗口，点击 **关闭程序** 或按 `Alt + F4` 退出。退出会自动释放串口。
-8. 标题右侧常驻 B 站、淘宝和一点创绘官网图标，点击后使用默认浏览器打开视频介绍、商品页面或官网；未连接、播报中及设备断开后均可使用。悬停可查看说明，也可用 `Tab` 聚焦、空格激活。
+## 界面预览
 
-三个入口绑定的地址：
+<p align="center">
+  <img src="docs/images/main-window.png" alt="主窗口：连接串口、发送文本以及调整音量和语速" width="750">
+  <br><em>主窗口 · 文本播报与声音调节</em>
+</p>
 
-- [B 站视频介绍](https://b23.tv/CDQRwvy)
-- [淘宝 YDI-D42 语音播报器](https://e.tb.cn/h.jRnbds15GKTB5Bl?tk=wADl61XJYpV)
-- [一点创绘官网](https://ydich.cn/)
+<table>
+  <tr>
+    <th width="42%">音色与音调</th>
+    <th width="58%">读取模块配置</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/images/sound-settings.png" alt="声音设置面板：选择音色并调整音调" width="320"></td>
+    <td align="center"><img src="docs/images/read-configuration.png" alt="读取配置后的主窗口，显示模块音量、语速、音调和音色" width="500"></td>
+  </tr>
+</table>
 
-音色以编号和类型显示，不显示具体发音人姓名。音色与音调收到模块确认后在本次运行中保留，后续播报、音量/语速设置沿用已确认选择。每次启动恢复默认值，不保存配置文件或应用注册表设置，也不读取旧版本保存的参数。未连接或操作进行中时，设置入口暂不可用。
+截图来自应用界面运行测试，使用模拟串口展示连接、设置与配置读取状态。[截图来源与更新方法](docs/images/README.md)。
 
-| 界面编号 | 类型 | 模块音色 ID |
+## 下载
+
+前往 [Releases](https://github.com/Cans518/YDI_TTS/releases/latest) 下载对应平台的发布包。
+
+| 平台 | 格式 | 使用方式 |
 | --- | --- | --- |
-| 音色 01 | 女声 | 3 |
-| 音色 02 | 男声 | 51 |
-| 音色 03 | 男声 | 52 |
-| 音色 04 | 女声 | 53 |
-| 音色 05 | 特殊音色 | 54 |
-| 音色 06 | 女童声 | 55 |
-| 音色 07 | 男童声 | 56 |
-| 音色 08 | 男童声 | 57 |
+| Windows x86_64 | 单文件 EXE | 下载后直接运行 |
+| Linux x86_64 | AppImage | 赋予执行权限后运行，适用于 Ubuntu 22.04 / glibc 2.35 或更新系统 |
+| macOS arm64 / x86_64 | DMG | 按芯片架构选择，将应用拖入 Applications；首次打开说明随包附带 |
 
-文本按 GBK 编码，最多 500 字节。中文通常占 2 字节；界面会即时显示字节数，提示不支持的字符和超限内容。Windows 使用明确的 CP936 编码，Linux/macOS 使用随包部署的 Qt Core5Compat GBK 转换，均拒绝无法表示的字符。
+Linux 串口访问权限、macOS 首次启动和平台打包步骤见 [跨平台打包](docs/packaging.md)。
 
-底部同一栏左侧轮播最新操作结果与常用提示，右侧固定显示“一点创绘 · Mzee”。普通提示停留约 4 秒，再平滑上滑切换；页码显示当前位置。长消息按实际宽度分页，悬停可暂停并查看全文，点击或聚焦后使用左右键 / 空格可切换。
+## 快速上手
 
-新的操作反馈立即显示。忙碌、错误提示只轮播当前消息自身的分页，不穿插普通提示，直到出现新的状态。窗口隐藏、应用切到后台或提示栏获得键盘焦点时暂停轮播，恢复后重新给足阅读时间。超时、写入失败或设备拔出后会断开连接，停止后续命令；检查设备后重新连接即可。退出窗口会取消等待并关闭串口。
+准备好 TTS 模块和 USB 串口连接，安装对应 USB 串口驱动后启动应用。
 
-## 界面与动画
+1. **连接设备**：选择串口，点击 **打开串口**，再用 **测试连接** 检查模块响应。
+2. **发送文本**：输入要播报的内容，点击 **发送** 或按 `Enter`。
+3. **调整声音**：拖动音量、语速滑块，点击对应的 **设置**；在 **音色音调** 面板中选择声音与音调后一起设置。
+4. **查看配置**：点击 **读取配置**，将模块当前参数显示到界面中。
 
-- 使用原有“一点创绘”印章图片作为完整窗口背景，叠加柔和提亮层。功能区采用更明亮的浅色玻璃面板、轻微背景模糊和细边缘高光，保留照片纹理，减轻灰暗感。
-- 保持无边框、圆角小窗口，无系统标题栏和最小化 / 最大化 / 关闭按键。固定 500 × 250，全部操作无需滚动。
-- 按钮采用明亮、低饱和的多色浅底：浅鼠尾草绿用于打开串口、浅雾蓝用于发送、奶杏用于测试、浅陶粉用于关闭、浅紫用于音量和音色音调、薄荷青用于语速和读取配置。搭配同色系深色文字、细边框和轻阴影，悬停与按下时柔和加深，保持清楚的文字对比。
-- 音量和语速保留长滑轨；测试连接、音色音调、读取配置、关闭程序四个按钮放在同一行，主窗口尺寸不变。音色与音调共用一个居中弹出面板，屏幕边缘会自动调整位置。
-- 背景按比例居中裁剪，保留原图、不拉伸变形；缩放与毛玻璃模糊结果均缓存，仅尺寸或 DPI 改变时更新，避免动画期间反复计算。
-- 按钮悬停为 140ms 过渡，滑块切换为 160ms 过渡。逻辑值立即生效，拖动过程直接反馈；快速切换沿用当前视觉位置。
-- 悬停提示与设置面板共用暖白至浅灰绿的背景、细边框和柔和阴影，与主界面的浅色背景协调；提示保留短淡入，区分标题、说明与快捷键。离开、点击、关闭窗口或提示源控件销毁时会及时收起，弹出设置面板与提示均会避开屏幕边界。
-- 底栏轮播采用 200ms 的上滑淡入过渡，版权保持固定；自动切页不会覆盖输入校验状态，也不会反复触发无障碍警报。
-- 滑块支持方向键、Home / End，并通过 Qt 原生滑块接口向辅助技术暴露数值。
-- 动态效果默认开启，界面不再提供“减少动态效果”选项。隐藏控件停止动画；忙碌指示只在可见且应用处于前台时刷新，空闲时不运行刷新计时器。
-- 界面使用用户提供的 `resources/fonts/LXGWWenKaiMonoGBScreen.ttf`，字体随程序打包。保留文字抗锯齿、垂直 hinting 与常规字重，让标题、正文和按键使用统一字体。
-- 顶部品牌按钮采用粉色 B 站、橙色淘宝 SVG 图标，以及一点创绘官网自带的图标，与浅色按钮主题搭配，图标随程序打包。图标来源及许可见 [资源来源说明](resources/licenses/THIRD_PARTY.md)。
+文本采用 GBK 编码，每次最多 **500 字节**，界面会即时提示字符与长度。应用在本次运行中保留已确认的声音设置，重新启动使用默认值。
 
-## 仓库结构
+| 快捷操作 | 用途 |
+| --- | --- |
+| `Enter` / `Ctrl + Enter` | 发送文本 |
+| `F5` | 刷新串口列表 |
+| `Esc` | 收起声音设置面板 |
+| 方向键 / `Home` / `End` | 调整已聚焦的滑块 |
+| 拖动顶部标题区域 | 移动窗口 |
+| `Alt + F4` | 退出应用 |
 
-```text
-src/app/          程序入口、主窗口与操作流程
-src/core/         通信帧、参数映射与异步串口事务
-src/ui/           按钮、滑块、合并面板、提示与主题
-resources/        图片、图标、字体、样式和许可说明
-scripts/          普通构建、单文件构建及公共辅助函数
-tests/            协议、串口模拟、交互和截图验证
-docs/             模块通信约定
-packaging/        平台桌面入口与打包资料
-.github/          多平台构建和发布工作流
-```
+## 开发与构建
 
-文本统一使用 UTF-8 和 LF 换行，C++ 格式由根目录 `.clang-format` 定义。构建产物、截图、临时文件和 IDE 个人设置由 `.gitignore` 排除；仓库保存可重建的源码与资源。
+使用 **C++17**、**CMake 3.19+** 和 **Qt 6.5+**。Qt 组件包括 Core、Widgets、SerialPort、Svg，运行测试还需 Test；Linux/macOS 另需 Core5Compat。
 
-大体积字体与图片使用两阶段资源编译，程序和测试共用资源对象。构建脚本默认使用 2 个并行任务，可用 `-Jobs` 调整；建议依次执行两种构建。自动验证会记录插件加载日志，便携版显式链接并注册所需的平台和图像插件。
+### Windows
 
-## 构建与验证（Windows）
-
-单文件便携版使用静态 Qt，将 Qt、串口支持、SVG 插件、编译器运行库及全部界面资源编入一个 EXE。无需安装；每次启动使用默认参数，不生成 INI，也不保存应用注册表配置。
+安装 PowerShell 7、Qt 和 MinGW 工具链后，在项目根目录运行：
 
 ```powershell
-# 默认使用本机 Qt 6.8.2-static / MinGW 13.1
+# 构建、运行测试并生成界面截图（默认 Qt 6.8.2 / MinGW 13.1）
+.\scripts\verify.ps1
+
+# 自定义工具链路径，并打包 Qt 运行库
+.\scripts\verify.ps1 -QtRoot 'D:/Qt/6.8.2/mingw_64' -ToolsRoot 'D:/Qt/Tools' -Package
+```
+
+产物位于 `build/verification/`；使用 `-Package` 后，可运行 `build/verification/app/bin/YDI_TTS.exe`。脚本使用临时目录中的 ASCII 路径构建，支持中文工作区路径。
+
+安装静态 Qt 后，可构建单文件便携版：
+
+```powershell
 .\scripts\package-portable.ps1
 ```
 
-可直接携带的文件为 `build/portable/release/YDI_TTS_Portable.exe`。构建脚本检查 EXE 导入表，并在移除 Qt / MinGW 环境路径后运行测试；再把单个 EXE 复制到独立的中文、空格目录中，以 Windows 和 offscreen 平台分别验证启动。验证结果、依赖清单和截图保存在 `build/portable/verification/`。
+输出为 `build/portable/release/YDI_TTS_Portable.exe`，工具链参数见脚本。[更多平台的打包步骤 →](docs/packaging.md)
 
-需要 Qt 6.5 或更新版本的 Core、Widgets、SerialPort、Svg 和 Test，CMake、Ninja 及对应的 C++17 编译器。验证脚本使用 PowerShell 7，默认适配本机 Qt 6.8.2 / MinGW 13.1。
+### CMake
 
-```powershell
-.\scripts\verify.ps1
-```
+也可以在已配置 Qt 和编译器环境的终端中直接构建（建议使用 ASCII 路径）：
 
-脚本将源码副本放到临时目录的 ASCII 路径下，避免中文路径及 OneDrive 占位目录影响 Qt 代码生成。工作区源码不移动、不删除。脚本重新配置 CMake 缓存以规避本机工具链重配置异常，随后构建、运行无头测试并生成截图。
-
-```powershell
-# 指定本地工具链位置
-.\scripts\verify.ps1 -QtRoot 'D:/Qt/6.8.2/mingw_64' -ToolsRoot 'D:/Qt/Tools'
-
-# 构建、测试，并生成包含 Qt 运行库的可运行目录
-.\scripts\verify.ps1 -Package
-```
-
-输出位于 `build/verification/`：
-
-- `00-tool.png`：默认小工具界面预览。
-- `01-disconnected.png` 至 `08-keyboard-focus.png`：主窗口状态截图。
-- `09-sound-panel.png`、`10-read-configuration.png`、`11-hover-hint.png`：合并设置面板、读取配置后的主界面和悬停卡片预览。
-- `12-carousel-current.png`、`13-carousel-next.png`、`14-carousel-long-error.png`：当前反馈、下一条提示和长错误消息分页预览。
-- `15-sound-settings.png`、`16-read-sound-settings.png`：单独截取的合并设置面板及回读配置后的面板；`17-hover-hint-detail.png`：悬停提示卡片细节。
-- `tests.xml`：CTest 测试报告。
-- `YDI_TTS.exe`：编译后的程序，需要 Qt 运行库在 PATH 中。
-- 使用 `-Package` 时，`app/bin/YDI_TTS.exe` 及同目录运行库可直接运行。
-
-打包脚本还会在移除开发环境 Qt PATH 后，分别使用 Windows 和 offscreen 平台执行 `--smoke-test`，等待程序自动退出并检查退出码。
-
-非同步、ASCII 路径下也可直接使用 CMake：
-
-```powershell
-cmake -S . -B build/local -G Ninja -DCMAKE_PREFIX_PATH='D:/Qt/6.8.2/mingw_64'
+```sh
+cmake -S . -B build/local -G Ninja -DCMAKE_PREFIX_PATH="/path/to/Qt"
 cmake --build build/local
 ctest --test-dir build/local --output-on-failure
 ```
 
-运行程序和测试前，将 Qt `bin` 与对应编译器的 `bin` 加入 PATH。没有 Qt Test 的发布构建可传入 `-DBUILD_TESTING=OFF`。
+运行前将 Qt 与编译器的运行库目录加入系统库搜索路径；仅构建应用时可添加 `-DBUILD_TESTING=OFF`。测试涵盖文本编码、参数设置、模拟串口交互和界面操作。
 
-## Linux 与 macOS 分发
+## 项目结构
 
-| 平台 | 发布文件 | 说明 |
-| --- | --- | --- |
-| Windows x86_64 | 单文件 EXE | 本地静态 Qt 构建，不依赖外部 Qt DLL |
-| Linux x86_64 | AppImage | Ubuntu 22.04 / glibc 2.35 或更新的桌面系统；验证 X11 与 Wayland |
-| macOS arm64 / x86_64 | 两个独立 DMG | 目标 macOS 12+；临时签名，未进行 Developer ID 签名或公证 |
+```text
+src/app/       应用入口与主窗口
+src/core/      协议与异步串口事务
+src/ui/        控件、主题、动画与提示
+resources/     图标、背景、字体与许可
+scripts/       构建、验证与打包脚本
+tests/        自动化测试
+docs/         开发文档与界面截图
+packaging/     各平台分发资源
+```
 
-Linux AppImage 下载后需赋予执行权限；串口权限由系统管理。macOS 未公证版本的首次打开提示与处理说明随 DMG 附带。各平台都不会保存配置，每次启动恢复默认值。
+## 参与贡献
 
-构建步骤、CI 发布流程及签名状态见 [跨平台打包](docs/packaging.md)。发布包提供 `SHA256SUMS` 与源码提交信息。
+欢迎通过 [Issues](https://github.com/Cans518/YDI_TTS/issues) 提交问题与功能建议，或通过 Pull Request 改进代码、文档和平台支持。
 
-## 授权与依赖
+提交问题时请附上系统版本、应用版本、复现步骤；涉及设备时补充模块与 USB 串口型号。修改代码后请运行相关测试，并遵循仓库的 `.clang-format`、UTF-8 和 LF 格式约定。界面改动可附上更新后的截图，方便评审。
 
-项目代码采用 GPL-3.0-only。字体、图标及 Qt 依赖的许可和对应源码获取方式见 [依赖说明](docs/dependencies.md)；许可文本同时随发布包提供。
+## 文档与相关链接
 
-## 验证范围与硬件验收
+- [模块通信约定](docs/protocol.md)：串口参数、指令格式与声音参数映射。
+- [跨平台打包](docs/packaging.md)：平台构建、分发与发布流程。
+- [依赖说明](docs/dependencies.md) · [资源来源](resources/licenses/THIRD_PARTY.md)。
+- [B 站视频介绍](https://b23.tv/CDQRwvy) · [YDI-D42 语音播报器](https://e.tb.cn/h.jRnbds15GKTB5Bl?tk=wADl61XJYpV) · [一点创绘官网](https://ydich.cn/)。
 
-自动测试覆盖 253 / 254 / 500 字节帧长度、中文编码、非法字符、超长文本、异步等待期间事件循环可响应、命令排序、超时及写入失败、取消重试、重复回复批次、设备断开、键盘操作、滑块边界、减少动态效果和窗口布局。模拟串口集成测试验证发送、设置、失败恢复及关闭流程。
+## 许可证
 
-新增检查覆盖八种音色与五档音调命令、同次运行中再播报沿用参数、重开窗口恢复默认值、忽略旧版本保存的偏好、取消与写入失败不覆盖本次已确认设置，以及弹窗尺寸、提示隐藏和屏幕边界。
-
-配置回读检查覆盖固定示例报文、所有分包位置、粘包、参数内包含 `4F` / `45` / `5F`、截断与超时、异常参数拒绝、五档映射，以及读取前后不额外写入设置。音色音调在同一帧中提交，完整确认后才更新本次运行状态。
-
-提示栏检查覆盖自动切页、悬停暂停、新消息优先显示、隐藏后停表、长消息完整分页、忙碌/错误优先、输入校验恢复及版权栏位置稳定。
-
-通信帧、五档映射、配置回读和失败处理见 [模块通信约定](docs/protocol.md)。自动测试使用模拟串口；实际模块仍需验证中文播报、参数设置与回读、拔插恢复和长文本播放。
+项目代码采用 [GPL-3.0-only](LICENSE)。字体、图标及 Qt 依赖按各自许可分发，详情见 [资源与依赖说明](resources/licenses/THIRD_PARTY.md)。
