@@ -122,7 +122,8 @@ ctest --test-dir build/local --output-on-failure
 ## 项目结构
 
 ```text
-src/app/       应用入口与主窗口
+cmake/         编译配置与安装规则
+src/app/       应用入口、主窗口流程与视图
 src/core/      协议与异步串口事务
 src/ui/        控件、主题、动画与提示
 resources/     图标、背景、字体与许可
@@ -140,6 +141,7 @@ packaging/     各平台分发资源
 
 ## 文档与相关链接
 
+- [开发指南](docs/development.md)：代码分层、测试组织与本地产物清理。
 - [模块通信约定](docs/protocol.md)：串口参数、指令格式与声音参数映射。
 - [跨平台打包](docs/packaging.md)：平台构建、分发与发布流程。
 - [依赖说明](docs/dependencies.md) · [资源来源](resources/licenses/THIRD_PARTY.md)。

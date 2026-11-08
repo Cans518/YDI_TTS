@@ -190,4 +190,4 @@ jobs:
           test "$RELEASE_TAG" = "v$(python3 scripts/release-metadata.py version)"
           python3 scripts/release-metadata.py manifest dist
           gh release create "$RELEASE_TAG" dist/* --draft --target "$GITHUB_SHA" \
-            --title "YDI TTS $RELEASE_TAG" --notes-file docs/releases/v1.2.0.md
+            --title "YDI TTS $RELEASE_TAG" --notes-file "docs/releases/$RELEASE_TAG.md"

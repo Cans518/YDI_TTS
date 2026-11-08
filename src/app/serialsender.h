@@ -50,6 +50,7 @@ private:
     void updateControls();
     void updateTextState();
     void disconnectPort();
+    void finishOperation(bool success, const QString &message);
     void showFeedback(const QString &message, const QString &tone = QStringLiteral("info"));
     void beginOperation(Operation operation, const QVector<SerialTransaction::Step> &steps, const QString &success,
         int timeoutMs = 1000);
@@ -81,6 +82,7 @@ private:
     QString successMessage;
     Operation currentOperation = Operation::None;
     int submittedLevel = 0;
+    // Confirmed module state and the pending edit are deliberately separate.
     TtsProtocol::Configuration currentConfiguration;
     TtsProtocol::Configuration submittedConfiguration;
     bool connected = false;

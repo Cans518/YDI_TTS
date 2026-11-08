@@ -8,7 +8,7 @@
 | `sound-settings.png` | `15-sound-settings.png` | 音色与音调设置面板 |
 | `read-configuration.png` | `10-read-configuration.png` | 读取模块配置后的界面 |
 
-当前图片取自 `build/portable/verification/`，由 `tests/tst_tts.cpp` 中的界面测试生成。首页图标直接复用 `resources/icons/cn.ydich.tts.png`。
+当前图片取自 `build/portable/verification/`，由 `tests/tst_workflows.cpp` 中的界面测试生成。首页图标直接复用 `resources/icons/cn.ydich.tts.png`。
 
 更新界面后，在 Windows 上运行以下命令重新生成并同步截图：
 

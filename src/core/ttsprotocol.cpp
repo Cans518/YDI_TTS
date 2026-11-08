@@ -59,12 +59,12 @@ QByteArray TtsProtocol::textFrame(const QByteArray &payload)
 
 QByteArray TtsProtocol::volumeCommand(int level)
 {
-    return "[v" + QByteArray::number((qBound(0, level, 4) + 1) * 2) + ']';
+    return "[v" + QByteArray::number(VolumeValues[size_t(qBound(0, level, int(VolumeValues.size()) - 1))]) + ']';
 }
 
 QByteArray TtsProtocol::speedCommand(int level)
 {
-    return "[s" + QByteArray::number((qBound(0, level, 4) + 1) * 6) + ']';
+    return "[s" + QByteArray::number(SpeedValues[size_t(qBound(0, level, int(SpeedValues.size()) - 1))]) + ']';
 }
 
 QByteArray TtsProtocol::voiceCommand(int index)
@@ -118,9 +118,11 @@ std::optional<TtsProtocol::Configuration> TtsProtocol::parseConfiguration(const 
 
 int TtsProtocol::nearestLevel(int value, const std::array<int, 5> &values)
 {
+    // Promote before subtraction so extreme caller values cannot overflow int.
+    const auto distance = [value](int candidate) { return qAbs(qint64(value) - candidate); };
     int closest = 0;
     for (int i = 1; i < int(values.size()); ++i)
-        if (qAbs(value - values[size_t(i)]) < qAbs(value - values[size_t(closest)]))
+        if (distance(values[size_t(i)]) < distance(values[size_t(closest)]))
             closest = i;
     return closest; // Equal distances select the lower level.
 }

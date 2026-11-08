@@ -44,7 +44,7 @@ void CustomLevelSlider::setSliderHeight(int height)
 
 qreal CustomLevelSlider::targetPosition() const
 {
-    return maximum() == minimum() ? 0 : qreal(value() - minimum()) / (maximum() - minimum());
+    return maximum() == minimum() ? 0 : qreal(qint64(value()) - minimum()) / (qint64(maximum()) - minimum());
 }
 
 QRectF CustomLevelSlider::trackRect() const
@@ -94,7 +94,7 @@ void CustomLevelSlider::paintEvent(QPaintEvent *)
     p.drawRoundedRect(active, 3, 3);
 
     // Cap tick density for callers that choose unusually large ranges.
-    const int levels = maximum() - minimum() + 1;
+    const qint64 levels = qint64(maximum()) - minimum() + 1;
     if (levels <= 20) {
         for (int i = 0; i < levels; ++i) {
             qreal fraction = levels <= 1 ? 0 : qreal(i) / (levels - 1);
@@ -123,7 +123,7 @@ void CustomLevelSlider::paintEvent(QPaintEvent *)
     numberFont.setBold(false);
     p.setFont(numberFont);
     p.drawText(QRectF(handleX - radius, centerY - radius, radius * 2, radius * 2), Qt::AlignCenter,
-        QString::number(value() + 1));
+        QString::number(qint64(value()) + 1));
 }
 
 void CustomLevelSlider::updateLevelFromPosition(const QPointF &pos)
@@ -136,7 +136,8 @@ void CustomLevelSlider::updateLevelFromPosition(const QPointF &pos)
     qreal fraction = qBound(0.0, (pos.x() - track.left()) / track.width(), 1.0);
     if (isRightToLeft())
         fraction = 1 - fraction;
-    setValue(minimum() + qRound(fraction * (maximum() - minimum())));
+    // QSlider permits the full int range; interpolate in 64 bits before narrowing.
+    setValue(int(qint64(minimum()) + qRound64(fraction * (qint64(maximum()) - minimum()))));
 }
 
 void CustomLevelSlider::mousePressEvent(QMouseEvent *event)
@@ -146,8 +147,10 @@ void CustomLevelSlider::mousePressEvent(QMouseEvent *event)
         return;
     }
     setFocus(Qt::MouseFocusReason);
-    updateLevelFromPosition(event->position());
+    // Mark the drag before changing value so the handle follows the first press immediately.
     setSliderDown(true);
+    settleAnimation(); // A press at the current value does not emit valueChanged.
+    updateLevelFromPosition(event->position());
     event->accept();
 }
 

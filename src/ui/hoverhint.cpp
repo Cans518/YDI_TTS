@@ -175,7 +175,8 @@ protected:
             const auto type = event->type();
             if (type == QEvent::MouseButtonPress || type == QEvent::KeyPress || type == QEvent::Wheel
                 || type == QEvent::ApplicationDeactivate
-                || (watched == source && (type == QEvent::Leave || type == QEvent::ToolTipChange))
+                || (watched == source
+                    && (type == QEvent::Leave || type == QEvent::ToolTipChange || type == QEvent::Hide))
                 || (watched == source->window()
                     && (type == QEvent::Hide || type == QEvent::Close || type == QEvent::WindowDeactivate)))
                 dismiss();

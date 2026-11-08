@@ -1,5 +1,10 @@
 #include "core/serialtransaction.h"
 #include "core/ttsprotocol.h"
+#include <algorithm>
+
+namespace {
+constexpr int FrameGapMs = 35;
+}
 
 SerialTransaction::SerialTransaction(QIODevice *device, QObject *parent)
     : QObject(parent)
@@ -11,13 +16,21 @@ SerialTransaction::SerialTransaction(QIODevice *device, QObject *parent)
             return;
         finish(false, QStringLiteral("%1超时，请检查模块供电与接线后重新连接。").arg(m_steps.at(m_index).description));
     });
+    if (!m_device)
+        return;
+    connect(m_device, &QObject::destroyed, this, [this] {
+        m_device.clear();
+        cancel(QStringLiteral("连接设备已释放，操作已取消。"));
+    });
     connect(m_device, &QIODevice::readyRead, this, &SerialTransaction::receive);
     connect(m_device, &QIODevice::aboutToClose, this, [this] { cancel(QStringLiteral("连接已断开，操作已取消。")); });
 }
 
 bool SerialTransaction::start(const QVector<Step> &steps, int timeoutMs)
 {
-    if (m_busy || steps.isEmpty() || !m_device->isOpen() || !m_device->isWritable())
+    if (m_busy || steps.isEmpty() || !m_device || !m_device->isOpen() || !m_device->isReadable()
+        || !m_device->isWritable()
+        || std::any_of(steps.cbegin(), steps.cend(), [](const Step &step) { return step.frame.isEmpty(); }))
         return false;
     m_steps = steps;
     m_response.clear();
@@ -37,15 +50,15 @@ void SerialTransaction::writeNext()
         finish(true);
         return;
     }
-    if (!m_device->isOpen()) {
+    if (!m_device || !m_device->isOpen()) {
         finish(false, QStringLiteral("串口已断开，请重新连接。"));
         return;
     }
     // Cancellation, write errors and rapid reconnects must not bypass UART spacing.
-    const qint64 elapsed = m_frameGap.isValid() ? m_frameGap.elapsed() : 35;
-    if (elapsed < 35) {
+    const qint64 elapsed = m_frameGap.isValid() ? m_frameGap.elapsed() : FrameGapMs;
+    if (elapsed < FrameGapMs) {
         const auto generation = m_generation;
-        QTimer::singleShot(int(35 - elapsed), Qt::PreciseTimer, this, [this, generation] {
+        QTimer::singleShot(int(FrameGapMs - elapsed), Qt::PreciseTimer, this, [this, generation] {
             if (m_busy && m_generation == generation)
                 writeNext();
         });
@@ -54,11 +67,14 @@ void SerialTransaction::writeNext()
     m_device->readAll(); // Discard residual acknowledgements before the next command.
     m_received.clear();
     const auto step = m_steps.at(m_index);
-    m_waiting = true;
-    m_deadline.start(m_timeoutMs);
+    // progress() may run arbitrary direct slots. No command has been sent yet,
+    // so replies delivered by those slots must not acknowledge this step.
+    m_waiting = false;
     const auto generation = m_generation;
     emit progress(step.description, m_index + 1, int(m_steps.size()));
     if (m_busy && m_generation == generation) {
+        m_waiting = true;
+        m_deadline.start(m_timeoutMs);
         m_frameGap.start();
         const auto written = m_device->write(step.frame);
         if (m_busy && m_generation == generation && written != step.frame.size())
@@ -68,6 +84,8 @@ void SerialTransaction::writeNext()
 
 void SerialTransaction::receive()
 {
+    if (!m_device)
+        return;
     const QByteArray data = m_device->readAll();
     if (!m_busy || !m_waiting)
         return;
@@ -116,7 +134,7 @@ void SerialTransaction::completeStep()
     // Leave >30 ms between UART frames. Waiting 35 ms after
     // the ACK also protects a new operation started by the finished callback.
     // Consume this entire reply; never reuse its ACK for another command.
-    QTimer::singleShot(35, Qt::PreciseTimer, this, [this, generation] {
+    QTimer::singleShot(FrameGapMs, Qt::PreciseTimer, this, [this, generation] {
         if (m_busy && m_generation == generation) {
             ++m_index;
             writeNext();
